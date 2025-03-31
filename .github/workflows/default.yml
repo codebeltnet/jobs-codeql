@@ -6,6 +6,7 @@ on:
       timeout-minutes:
         description: The number of minutes to wait before timing out the job. Default is 15.
         required: false
+        type: number
         default: 15
 
 jobs:
