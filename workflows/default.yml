@@ -1,0 +1,38 @@
+name: GitHub CodeQL
+
+on:
+  workflow_call:
+    inputs:
+      timeout-minutes:
+        description: The number of minutes to wait before timing out the job. Default is 15.
+        required: false
+        default: 15
+
+jobs:
+  codeql:
+    name: 🛡️ Security Analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - name: Checkout
+        uses: codebeltnet/git-checkout@v1
+
+      - name: Install .NET
+        uses: codebeltnet/install-dotnet@v1
+        with:
+          includePreview: true
+
+      - name: Restore Dependencies
+        uses: codebeltnet/dotnet-restore@v2
+
+      - name: Prepare CodeQL SAST Analysis
+        uses: codebeltnet/codeql-scan@v1
+
+      - name: Build
+        uses: codebeltnet/dotnet-build@v2
+        with:
+          buildSwitches: -p:SkipSignAssembly=true
+          uploadBuildArtifact: false
+
+      - name: Finalize CodeQL SAST Analysis
+        uses: codebeltnet/codeql-scan-finalize@v1
