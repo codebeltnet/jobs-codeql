@@ -3,6 +3,11 @@ name: GitHub CodeQL
 on:
   workflow_call:
     inputs:
+      include-preview:
+        description: When set to true, includes preview versions of .NET. Default is false.
+        required: false
+        type: boolean
+        default: false
       timeout-minutes:
         description: The number of minutes to wait before timing out the job. Default is 15.
         required: false
@@ -19,9 +24,9 @@ jobs:
         uses: codebeltnet/git-checkout@v1
 
       - name: Install .NET
-        uses: codebeltnet/install-dotnet@v1
+        uses: codebeltnet/install-dotnet@v2
         with:
-          includePreview: true
+          includePreview: ${{ inputs.include-preview }}
 
       - name: Restore Dependencies
         uses: codebeltnet/dotnet-restore@v2

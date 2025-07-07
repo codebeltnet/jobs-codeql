@@ -36,6 +36,8 @@ codeql-call:
 
 ```yaml
 with:
+  # When set to true, includes preview versions of .NET. Default is false.
+  include-preview: false
   # The maximum time in minutes to allow the job to run. Default is 15 minutes.
   timeout-minutes: 15
 ```
@@ -55,7 +57,9 @@ jobs:
   sonarcloud:
     name: call-codeql
     needs: [build,test]
-    uses: codebeltnet/jobs-codeql/.github/workflows/default@v1
+    uses: codebeltnet/jobs-codeql/.github/workflows/default@v2
+    with:
+      include-preview: true
 ```
 
 ## Contributing to Reusable Workflows for SonarQube Cloud
