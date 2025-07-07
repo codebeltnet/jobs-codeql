@@ -29,16 +29,15 @@ jobs:
           includePreview: ${{ inputs.include-preview }}
 
       - name: Restore Dependencies
-        uses: codebeltnet/dotnet-restore@v2
+        uses: codebeltnet/dotnet-restore@v3
 
       - name: Prepare CodeQL SAST Analysis
         uses: codebeltnet/codeql-scan@v1
 
       - name: Build
-        uses: codebeltnet/dotnet-build@v2
+        uses: codebeltnet/dotnet-build@v4
         with:
-          buildSwitches: -p:SkipSignAssembly=true
-          uploadBuildArtifact: false
+          build-switches: -p:SkipSignAssembly=true
 
       - name: Finalize CodeQL SAST Analysis
         uses: codebeltnet/codeql-scan-finalize@v1
