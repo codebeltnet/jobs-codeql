@@ -3,6 +3,10 @@ name: GitHub CodeQL
 on:
   workflow_call:
     inputs:
+      projects:
+        description: Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
+        required: false
+        type: string
       include-preview:
         description: When set to true, includes preview versions of .NET. Default is false.
         required: false
@@ -37,6 +41,7 @@ jobs:
       - name: Build
         uses: codebeltnet/dotnet-build@v4
         with:
+          projects: ${{ inputs.projects }}
           build-switches: -p:SkipSignAssembly=true
 
       - name: Finalize CodeQL SAST Analysis

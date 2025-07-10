@@ -36,6 +36,8 @@ codeql-call:
 
 ```yaml
 with:
+  # Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
+  projects:
   # When set to true, includes preview versions of .NET. Default is false.
   include-preview: false
   # The maximum time in minutes to allow the job to run. Default is 15 minutes.
