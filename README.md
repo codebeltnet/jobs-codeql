@@ -29,7 +29,7 @@ To call this workflow in your GitHub repository, you can follow these steps:
 
 ```yaml
 codeql-call:
-    uses: codebeltnet/jobs-codeql/.github/workflows/default.yml@v1
+    uses: codebeltnet/jobs-codeql/.github/workflows/default.yml@v3
 ```
 
 ### Inputs
@@ -38,11 +38,20 @@ codeql-call:
 with:
   # Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
   projects:
+  # Optional checkout branch, tag or SHA. Omit to retain the triggering ref.
+  ref: ''
+  # Optional reporting identity, independent of checkout. Set both or omit both.
+  analysis-ref: ''
+  analysis-sha: ''
+  # Build configuration. Defaults to Debug for existing callers.
+  configuration: Debug
   # When set to true, includes preview versions of .NET. Default is false.
   include-preview: false
   # The maximum time in minutes to allow the job to run. Default is 15 minutes.
   timeout-minutes: 15
 ```
+
+For post-release assurance, set `ref` and `analysis-sha` to the exact released SHA, `analysis-ref: refs/heads/main`, and `configuration: Release`. The checkout `ref` selects source; `analysis-ref` and `analysis-sha` are forwarded as `ref` and `sha` to `codeql-scan-finalize`, then to the official analyze action. Existing callers can omit these inputs to retain their triggering checkout, automatic reporting identity and Debug build. The upstream analyze action requires both reporting inputs when overriding identity.
 
 ### Secrets
 
@@ -59,7 +68,7 @@ jobs:
   sonarcloud:
     name: call-codeql
     needs: [build,test]
-    uses: codebeltnet/jobs-codeql/.github/workflows/default@v2
+    uses: codebeltnet/jobs-codeql/.github/workflows/default.yml@v3
     with:
       include-preview: true
 ```
