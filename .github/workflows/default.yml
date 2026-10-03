@@ -7,6 +7,26 @@ on:
         description: Optional path to the project(s) file to build. Pass empty to have MSBuild use the default behavior. Supports globbing. Default is an empty string.
         required: false
         type: string
+      ref:
+        description: The branch, tag or SHA to check out. Omit to retain the triggering ref; independent of analysis-ref.
+        required: false
+        type: string
+        default: ''
+      analysis-ref:
+        description: The reporting ref, e.g. refs/heads/main. Set together with analysis-sha; omit both to retain automatic detection.
+        required: false
+        type: string
+        default: ''
+      analysis-sha:
+        description: The reporting commit SHA. Set together with analysis-ref; omit both to retain automatic detection.
+        required: false
+        type: string
+        default: ''
+      configuration:
+        description: The build configuration. Defaults to Debug to preserve existing callers.
+        required: false
+        type: string
+        default: Debug
       include-preview:
         description: When set to true, includes preview versions of .NET. Default is false.
         required: false
@@ -25,7 +45,14 @@ jobs:
     timeout-minutes: ${{ inputs.timeout-minutes }}
     steps:
       - name: Checkout
+        if: ${{ inputs.ref == '' }}
         uses: codebeltnet/git-checkout@v1
+
+      - name: Checkout requested ref
+        if: ${{ inputs.ref != '' }}
+        uses: codebeltnet/git-checkout@v1
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Install .NET
         uses: codebeltnet/install-dotnet@v3
@@ -41,8 +68,12 @@ jobs:
       - name: Build
         uses: codebeltnet/dotnet-build@v4
         with:
+          configuration: ${{ inputs.configuration }}
           projects: ${{ inputs.projects }}
           build-switches: -p:SkipSignAssembly=true
 
       - name: Finalize CodeQL SAST Analysis
         uses: codebeltnet/codeql-scan-finalize@v1
+        with:
+          ref: ${{ inputs.analysis-ref }}
+          sha: ${{ inputs.analysis-sha }}
